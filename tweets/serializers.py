@@ -4,6 +4,7 @@ from .models import Tweet
 
 # MAX_TWEET_LENGTH = settings.Max_Tweet_Length
 # TWEET_ACTION_OPTIONS = settings.TWEET_ACTION_OPTIONS
+obj = Tweet.objects.first()
 MAX_TWEET_LENGTH = 240
 TWEET_ACTION_OPTIONS = ["like", "unlike", "retweet"]
 
