@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse, Http404
 from .forms import TweetForm
 from .models import Tweet
-from .serializers import TweetSerializer, TweetActionSerializer
+from .serializers import TweetSerializer, TweetActionSerializer, TweetCreateSerializer
 from django.utils.http import is_safe_url
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes 
@@ -73,11 +73,11 @@ def tweet_action(request, tweet_id, *args, **kwargs):
         data = serializer.validated_data
         tweet_id = data.get('id')
         action = data.get('action')
-        content = data.get("content")
+        content = data.get('content')
         qs = Tweet.objects.filter(id=tweet_id)
         if not qs.exists():
             return Response({}, status=404)
-        qs = qs.filter(user=request.user)
+        # qs = qs.filter(user=request.user)
         obj = qs.first()
         if action == "like":
             obj.likes.add(request.user)
@@ -85,6 +85,8 @@ def tweet_action(request, tweet_id, *args, **kwargs):
             return Response(serializer.data, status=200)
         elif action == "unlike":
             obj.likes.remove(request.user)
+            serializer = TweetSerializer(obj)
+            return Response(serializer.data, status=200)
         elif action == "retweet":
             # This is To-Do
             new_tweet = Tweet.objects.create(
